@@ -1059,33 +1059,26 @@
           </div>
 
           <div class="col-lg-8">
-            <form action="/api/contact.js" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+            <form action="/api/contact" method="post" role="form" class="php-email-form" id="contactForm">
               <div class="row gy-4">
-
                 <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                  <input type="text" name="name" class="form-control" placeholder="Your Name" required>
                 </div>
-
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                <div class="col-md-6">
+                  <input type="email" class="form-control" name="email" placeholder="Your Email" required>
                 </div>
-
                 <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                  <input type="text" class="form-control" name="subject" placeholder="Subject">
                 </div>
-
                 <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
                 </div>
-
                 <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
+                  <div class="loading" style="display: none;">Loading</div>
+                  <div class="error-message" style="display: none;"></div>
+                  <div class="sent-message" style="display: none;">Your message has been sent. Thank you!</div>
                   <button type="submit">Send Message</button>
                 </div>
-
               </div>
             </form>
           </div><!-- End Contact Form -->
@@ -1160,7 +1153,6 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
@@ -1168,121 +1160,131 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 <!-- Fix for Bootstrap event listener issue -->
 <!-- Unified Form Handler for Vercel -->
+<!-- COMPLETE FORM HANDLER - Replace all other form scripts -->
 <script>
 (function() {
     'use strict';
     
-    // Wait for page to fully load
-    window.addEventListener('load', function() {
-        console.log('Initializing form handlers...');
+    // Kill any existing form handlers
+    if (window.php_email_form_submit) {
+        window.php_email_form_submit = null;
+    }
+    
+    // Wait for page to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initForms);
+    } else {
+        initForms();
+    }
+    
+    function initForms() {
+        console.log('Initializing forms...');
+        
+        // Remove any inline submit handlers
+        document.querySelectorAll('form').forEach(form => {
+            form.onsubmit = null;
+        });
         
         // Handle Booking Form
         const bookingForm = document.getElementById('bookingForm') || 
                            document.querySelector('form[action*="booktable"]');
         
         if (bookingForm) {
-            console.log('Booking form found');
-            setupFormHandler(bookingForm, '/api/booktable');
-        } else {
-            console.log('Booking form not found');
+            console.log('Found booking form');
+            setupForm(bookingForm, '/api/booktable');
         }
         
         // Handle Contact Form
         const contactForm = document.querySelector('form[action*="contact"]');
         
         if (contactForm) {
-            console.log('Contact form found');
-            setupFormHandler(contactForm, '/api/contact');
-        } else {
-            console.log('Contact form not found');
+            console.log('Found contact form');
+            setupForm(contactForm, '/api/contact');
+        }
+    }
+    
+    function setupForm(form, endpoint) {
+        // Completely replace the form to remove all event listeners
+        const newForm = form.cloneNode(true);
+        if (form.parentNode) {
+            form.parentNode.replaceChild(newForm, form);
         }
         
-        function setupFormHandler(form, endpoint) {
-            // Remove any existing submit handlers
-            const newForm = form.cloneNode(true);
-            form.parentNode.replaceChild(newForm, form);
+        // Set the action
+        newForm.action = endpoint;
+        
+        // Add our submit handler
+        newForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            // Add our handler
-            newForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('Form submitted to:', endpoint);
-                
-                // Get form elements
-                const loading = this.querySelector('.loading');
-                const errorMsg = this.querySelector('.error-message');
-                const sentMsg = this.querySelector('.sent-message');
-                
-                // Show loading
-                if (loading) loading.style.display = 'block';
-                if (errorMsg) errorMsg.style.display = 'none';
-                if (sentMsg) sentMsg.style.display = 'none';
-                
-                // Collect form data
-                const formData = new FormData(this);
-                const data = {};
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-                
-                console.log('Form data:', data);
-                
-                // Send to API
-                fetch(endpoint, {
+            console.log('Submitting to:', endpoint);
+            
+            // Get message elements
+            const loading = this.querySelector('.loading');
+            const errorMsg = this.querySelector('.error-message');
+            const sentMsg = this.querySelector('.sent-message');
+            
+            // Show loading
+            if (loading) loading.style.display = 'block';
+            if (errorMsg) errorMsg.style.display = 'none';
+            if (sentMsg) sentMsg.style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            console.log('Form data:', data);
+            
+            try {
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(data)
-                })
-                .then(async response => {
-                    const text = await response.text();
-                    console.log('Response status:', response.status);
-                    console.log('Response text:', text);
-                    
-                    if (!response.ok) {
-                        throw new Error(text || `Server error: ${response.status}`);
+                });
+                
+                const responseText = await response.text();
+                console.log('Response:', response.status, responseText);
+                
+                if (loading) loading.style.display = 'none';
+                
+                if (response.ok && responseText === 'OK') {
+                    // Success
+                    if (sentMsg) {
+                        sentMsg.style.display = 'block';
                     }
-                    return text;
-                })
-                .then(data => {
-                    console.log('Success:', data);
+                    this.reset();
                     
-                    if (loading) loading.style.display = 'none';
-                    
-                    if (data === 'OK') {
-                        if (sentMsg) {
-                            sentMsg.style.display = 'block';
-                        }
-                        this.reset();
-                        
-                        // Auto-hide success message
-                        setTimeout(() => {
-                            if (sentMsg) sentMsg.style.display = 'none';
-                        }, 5000);
-                    } else {
-                        if (errorMsg) {
-                            errorMsg.style.display = 'block';
-                            errorMsg.textContent = data || 'Submission failed';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    
-                    if (loading) loading.style.display = 'none';
-                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        if (sentMsg) sentMsg.style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Error
                     if (errorMsg) {
                         errorMsg.style.display = 'block';
-                        errorMsg.textContent = error.message || 'Network error. Please try again.';
+                        errorMsg.textContent = responseText || 'Submission failed';
                     }
-                });
-            });
-            
-            console.log('Form handler attached for:', endpoint);
-        }
-    });
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                
+                if (loading) loading.style.display = 'none';
+                
+                if (errorMsg) {
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = 'Network error. Please check your connection.';
+                }
+            }
+        });
+        
+        console.log('Form handler attached for:', endpoint);
+    }
 })();
 </script>
   <!-- Main JS File -->
