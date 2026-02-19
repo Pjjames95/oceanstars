@@ -1160,44 +1160,130 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/js/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 <!-- Fix for Bootstrap event listener issue -->
+<!-- Unified Form Handler for Vercel -->
 <script>
-// Save the original addEventListener
-const originalAddEventListener = EventTarget.prototype.addEventListener;
-
-// Override addEventListener to fix passive option issues
-EventTarget.prototype.addEventListener = function(type, listener, options) {
-    // Fix invalid options
-    if (options && typeof options === 'object') {
-        try {
-            // Clone the options to avoid modifying the original
-            const fixedOptions = {};
-            
-            // Copy valid properties
-            if (options.capture !== undefined) fixedOptions.capture = options.capture;
-            if (options.once !== undefined) fixedOptions.once = options.once;
-            
-            // Handle passive carefully - if it's not boolean, omit it
-            if (options.passive !== undefined && typeof options.passive === 'boolean') {
-                fixedOptions.passive = options.passive;
-            }
-            
-            return originalAddEventListener.call(this, type, listener, fixedOptions);
-        } catch (e) {
-            // If there's any error, fall back to basic addEventListener
-            return originalAddEventListener.call(this, type, listener, options.capture || false);
-        }
-    }
+(function() {
+    'use strict';
     
-    // Pass through unchanged if options is boolean or undefined
-    return originalAddEventListener.call(this, type, listener, options);
-};
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+        console.log('Initializing form handlers...');
+        
+        // Handle Booking Form
+        const bookingForm = document.getElementById('bookingForm') || 
+                           document.querySelector('form[action*="booktable"]');
+        
+        if (bookingForm) {
+            console.log('Booking form found');
+            setupFormHandler(bookingForm, '/api/booktable');
+        } else {
+            console.log('Booking form not found');
+        }
+        
+        // Handle Contact Form
+        const contactForm = document.querySelector('form[action*="contact"]');
+        
+        if (contactForm) {
+            console.log('Contact form found');
+            setupFormHandler(contactForm, '/api/contact');
+        } else {
+            console.log('Contact form not found');
+        }
+        
+        function setupFormHandler(form, endpoint) {
+            // Remove any existing submit handlers
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            
+            // Add our handler
+            newForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Form submitted to:', endpoint);
+                
+                // Get form elements
+                const loading = this.querySelector('.loading');
+                const errorMsg = this.querySelector('.error-message');
+                const sentMsg = this.querySelector('.sent-message');
+                
+                // Show loading
+                if (loading) loading.style.display = 'block';
+                if (errorMsg) errorMsg.style.display = 'none';
+                if (sentMsg) sentMsg.style.display = 'none';
+                
+                // Collect form data
+                const formData = new FormData(this);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+                
+                console.log('Form data:', data);
+                
+                // Send to API
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(async response => {
+                    const text = await response.text();
+                    console.log('Response status:', response.status);
+                    console.log('Response text:', text);
+                    
+                    if (!response.ok) {
+                        throw new Error(text || `Server error: ${response.status}`);
+                    }
+                    return text;
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    
+                    if (loading) loading.style.display = 'none';
+                    
+                    if (data === 'OK') {
+                        if (sentMsg) {
+                            sentMsg.style.display = 'block';
+                        }
+                        this.reset();
+                        
+                        // Auto-hide success message
+                        setTimeout(() => {
+                            if (sentMsg) sentMsg.style.display = 'none';
+                        }, 5000);
+                    } else {
+                        if (errorMsg) {
+                            errorMsg.style.display = 'block';
+                            errorMsg.textContent = data || 'Submission failed';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    
+                    if (loading) loading.style.display = 'none';
+                    
+                    if (errorMsg) {
+                        errorMsg.style.display = 'block';
+                        errorMsg.textContent = error.message || 'Network error. Please try again.';
+                    }
+                });
+            });
+            
+            console.log('Form handler attached for:', endpoint);
+        }
+    });
+})();
 </script>
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
