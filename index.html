@@ -597,7 +597,7 @@
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <form action="/forms/booktable.php" method="post" role="form" class="php-email-form" id="bookingForm">
+        <form action="/api/booktable.js" method="post" role="form" class="php-email-form" id="bookingForm">
           <div class="row gy-4">
             <div class="col-lg-4 col-md-6">
               <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
@@ -631,17 +631,12 @@
           </div>
         </form>
         
-        <!-- Direct Form Handler with ID -->
-<!-- ROBUST FORM HANDLER WITH FETCH -->
+       
 <script>
 (function() {
     'use strict';
     
-    // Wait for everything to load
     window.addEventListener('load', function() {
-        console.log('Window loaded, setting up form...');
-        
-        // Give Bootstrap time to fail
         setTimeout(function() {
             const form = document.getElementById('bookingForm');
             
@@ -650,30 +645,23 @@
                 return;
             }
             
-            console.log('Found form, setting up direct submission...');
+            // Update form action to use API endpoint
+            form.action = '/api/booktable';
             
-            // Remove ALL event listeners by replacing the form
-            const newForm = form.cloneNode(true);
-            form.parentNode.replaceChild(newForm, form);
+            console.log('Form setup complete');
             
-            // Add click handler to button instead of form submit
-            const submitBtn = newForm.querySelector('button[type="submit"]');
+            const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) {
-                console.log('Found submit button');
-                
                 submitBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     
                     console.log('Submit button clicked');
-                    
-                    // Manually trigger form submission
-                    submitForm(newForm);
+                    submitForm(form);
                 });
             }
             
-            // Also keep form submit as backup
-            newForm.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Form submit event');
@@ -683,18 +671,14 @@
             function submitForm(form) {
                 console.log('Submitting form...');
                 
-                // Validate required fields
-                const name = form.querySelector('[name="name"]').value;
-                const email = form.querySelector('[name="email"]').value;
-                const phone = form.querySelector('[name="phone"]').value;
-                const date = form.querySelector('[name="date"]').value;
-                const time = form.querySelector('[name="time"]').value;
-                const people = form.querySelector('[name="people"]').value;
+                // Get form data
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
                 
-                if (!name || !email || !phone || !date || !time || !people) {
-                    alert('Please fill in all required fields');
-                    return;
-                }
+                console.log('Form data:', data);
                 
                 // Show loading
                 const loading = document.querySelector('.loading');
@@ -705,13 +689,13 @@
                 if (errorMsg) errorMsg.style.display = 'none';
                 if (sentMsg) sentMsg.style.display = 'none';
                 
-                // Collect form data
-                const formData = new FormData(form);
-                
-                // Send via fetch
-                fetch(form.action, {
+                // Send as JSON
+                fetch('/api/booktable', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 })
                 .then(response => {
                     console.log('Response status:', response.status);
@@ -722,10 +706,8 @@
                     
                     if (loading) loading.style.display = 'none';
                     
-                    if (data && data.trim() === 'OK') {
-                        if (sentMsg) {
-                            sentMsg.style.display = 'block';
-                        }
+                    if (data === 'OK') {
+                        if (sentMsg) sentMsg.style.display = 'block';
                         form.reset();
                         
                         setTimeout(() => {
@@ -747,7 +729,7 @@
                     }
                 });
             }
-        }, 1000); // Wait 1 second for Bootstrap to fail
+        }, 1000);
     });
 })();
 </script>
@@ -1077,7 +1059,7 @@
           </div>
 
           <div class="col-lg-8">
-            <form action="/forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+            <form action="/api/contact.js" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
               <div class="row gy-4">
 
                 <div class="col-md-6">

@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/forms/(.*)", "destination": "/api/$1" }
+  ],
+  "env": {
+    "EMAIL_USER": "gachombajames7@gmail.com",
+    "EMAIL_PASS": "bgya rpjx nzod khej"
+  }
+}

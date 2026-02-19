@@ -1,0 +1,23 @@
+{
+  "name": "oceanstars",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pjjames95/oceanstars.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pjjames95/oceanstars/issues"
+  },
+  "homepage": "https://github.com/Pjjames95/oceanstars#readme",
+  "dependencies": {
+    "nodemailer": "^8.0.1"
+  }
+}
