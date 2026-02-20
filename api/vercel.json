@@ -5,5 +5,19 @@
   "env": {
     "EMAIL_USER": "gachombajames7@gmail.com",
     "EMAIL_PASS": "bgya rpjx nzod khej"
-  }
+  },
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    }
+  ]
+
 }

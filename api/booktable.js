@@ -1,7 +1,8 @@
+// api/booktable.js
 const nodemailer = require('nodemailer');
 
 module.exports = async (req, res) => {
-    // Enable CORS
+    // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,24 +15,23 @@ module.exports = async (req, res) => {
 
     // Only allow POST
     if (req.method !== 'POST') {
-        res.status(405).json({ error: 'Method not allowed' });
-        return;
+        return res.status(405).send('Method not allowed');
     }
 
     try {
+        console.log('Received booking request:', req.body);
+
         const { name, email, phone, date, time, people, message } = req.body;
 
         // Validate required fields
         if (!name || !email || !phone || !date || !time || !people) {
-            res.status(400).send('Please fill in all required fields');
-            return;
+            return res.status(400).send('Please fill in all required fields');
         }
 
         // Validate email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            res.status(400).send('Invalid email address');
-            return;
+            return res.status(400).send('Invalid email address');
         }
 
         // Create email content
@@ -49,24 +49,27 @@ Message:
 ${message || 'No message provided'}
         `;
 
+        console.log('Sending email...');
+
         // Configure nodemailer with Gmail
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASS  
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
 
         // Send email
         await transporter.sendMail({
-            from: `"Ocean Stars Hotel" <${process.env.EMAIL_USER}>`,
+            from: `"Spanish Hotel" <${process.env.EMAIL_USER}>`,
             to: 'gachombajames7@gmail.com',
             replyTo: email,
             subject: `New Table Booking Request - ${name}`,
             text: emailContent
         });
 
+        console.log('Email sent successfully');
         res.status(200).send('OK');
 
     } catch (error) {
