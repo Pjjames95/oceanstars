@@ -65,7 +65,7 @@ ${message}
 
         // Send email
         const info = await transporter.sendMail({
-            from: `"Spanish Hotel" <${process.env.EMAIL_USER}>`,
+            from: `"Ocean Stars Hotel" <${process.env.EMAIL_USER}>`,
             to: 'gachombajames7@gmail.com',
             replyTo: email,
             subject: subject ? `Contact: ${subject}` : 'New Contact Form Message',

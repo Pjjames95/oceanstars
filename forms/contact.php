@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->Port       = 587;
 
         // SMTP requires From to be your verified email
-        $mail->setFrom('gachombajames7@gmail.com', 'Spanish Hotel');
+        $mail->setFrom('gachombajames7@gmail.com', 'Ocean Stars Hotel');
 
         // Only add valid Reply-To
         $mail->addReplyTo($email, $name);

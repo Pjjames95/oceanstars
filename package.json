@@ -1,5 +1,5 @@
 {
-  "name": "spanishhotel",
+  "name": "ocean-stars-hotel",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Pjjames95/spanishhotel.git"
+    "url": "git+https://github.com/Pjjames95/ocean-stars-hotel.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Pjjames95/spanishhotel/issues"
+    "url": "https://github.com/Pjjames95/ocean-stars-hotel/issues"
   },
-  "homepage": "https://github.com/Pjjames95/spanishhotel#readme",
+  "homepage": "https://github.com/Pjjames95/ocean-stars-hotel#readme",
   "dependencies": {
     "nodemailer": "^8.0.1"
   }

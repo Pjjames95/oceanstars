@@ -62,7 +62,7 @@ ${message || 'No message provided'}
 
         // Send email
         await transporter.sendMail({
-            from: `"Spanish Hotel" <${process.env.EMAIL_USER}>`,
+            from: `"Ocean Stars Hotel" <${process.env.EMAIL_USER}>`,
             to: 'gachombajames7@gmail.com',
             replyTo: email,
             subject: `New Table Booking Request - ${name}`,

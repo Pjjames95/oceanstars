@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->CharSet    = 'UTF-8';
 
         // Recipients
-        $mail->setFrom('gachombajames7@gmail.com', 'Spanish Hotel Booking');
+        $mail->setFrom('gachombajames7@gmail.com', 'Ocean Stars Hotel Booking');
         $mail->addReplyTo($email, $name);
         $mail->addAddress($recipient);
 
