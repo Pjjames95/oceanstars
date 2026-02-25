@@ -633,44 +633,50 @@
         
        
 <script>
-document.getElementById('bookingForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    console.log("Script loaded");
+    console.log("Form element:", form);
+    if (!form) {
+        console.error("Booking form not found!");
+        return;
+    }
 
-    const form = this;
-    const loading = form.querySelector('.loading');
-    const errorMsg = form.querySelector('.error-message');
-    const sentMsg = form.querySelector('.sent-message');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+        const loading = form.querySelector('.loading');
+        const errorMsg = form.querySelector('.error-message');
+        const sentMsg = form.querySelector('.sent-message');
 
-    loading.style.display = 'block';
-    errorMsg.style.display = 'none';
-    sentMsg.style.display = 'none';
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
 
-    fetch('http://127.0.0.1:8000/api/book/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        loading.style.display = 'none';
+        loading.style.display = 'block';
+        errorMsg.style.display = 'none';
+        sentMsg.style.display = 'none';
 
-        if (result.message) {
-            sentMsg.style.display = 'block';
-            form.reset();
-        } else {
+        fetch('http://127.0.0.1:8000/api/book/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            loading.style.display = 'none';
+            if (result.message) {
+                sentMsg.style.display = 'block';
+                form.reset();
+            } else {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = result.error || 'Booking failed';
+            }
+        })
+        .catch(error => {
+            loading.style.display = 'none';
             errorMsg.style.display = 'block';
-            errorMsg.textContent = result.error || 'Booking failed';
-        }
-    })
-    .catch(error => {
-        loading.style.display = 'none';
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = 'Network error. Please try again.';
+            errorMsg.textContent = 'Network error. Please try again.';
+        });
     });
 });
 </script>
