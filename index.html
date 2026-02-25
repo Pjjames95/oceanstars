@@ -1203,11 +1203,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok && responseText === 'OK') {
                     // Success
                     if (sentMsg) {
-                        sentMsg.style.display = 'block';
-                        setTimeout(() => {
-                        if (sentMsg) sentMsg.style.display = 'none';
-                    }, 5000);
-                    }
+                      sentMsg.style.display = 'block';
+                      if (successTimeout) clearTimeout(successTimeout);
+                      successTimeout = setTimeout(() => {
+                      if (sentMsg) sentMsg.style.display = 'none';
+                      }, 5000);
+                      }
                     this.reset();
                     
                 } else {
