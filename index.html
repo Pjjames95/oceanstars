@@ -1204,13 +1204,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Success
                     if (sentMsg) {
                         sentMsg.style.display = 'block';
+                        setTimeout(() => {
+                        if (sentMsg) sentMsg.style.display = 'none';
+                    }, 5000);
                     }
                     this.reset();
                     
-                    // Hide success message after 5 seconds
-                    setTimeout(() => {
-                        if (sentMsg) sentMsg.style.display = 'none';
-                    }, 5000);
                 } else {
                     // Error
                     if (errorMsg) {
