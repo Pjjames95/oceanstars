@@ -597,7 +597,7 @@
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <form action="/api/booktable.js" method="post" role="form" class="php-email-form" id="bookingForm">
+        <form id="bookingForm">
           <div class="row gy-4">
             <div class="col-lg-4 col-md-6">
               <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
@@ -633,105 +633,46 @@
         
        
 <script>
-(function() {
-    'use strict';
-    
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            const form = document.getElementById('bookingForm');
-            
-            if (!form) {
-                console.error('Form not found!');
-                return;
-            }
-            
-            // Update form action to use API endpoint
-            form.action = '/api/booktable';
-            
-            console.log('Form setup complete');
-            
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('Submit button clicked');
-                    submitForm(form);
-                });
-            }
-            
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Form submit event');
-                submitForm(this);
-            });
-            
-            function submitForm(form) {
-                console.log('Submitting form...');
-                
-                // Get form data
-                const formData = new FormData(form);
-                const data = {};
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-                
-                console.log('Form data:', data);
-                
-                // Show loading
-                const loading = document.querySelector('.loading');
-                const errorMsg = document.querySelector('.error-message');
-                const sentMsg = document.querySelector('.sent-message');
-                
-                if (loading) loading.style.display = 'block';
-                if (errorMsg) errorMsg.style.display = 'none';
-                if (sentMsg) sentMsg.style.display = 'none';
-                
-                // Send as JSON
-                fetch('/api/booktable', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.text();
-                })
-                .then(data => {
-                    console.log('Response:', data);
-                    
-                    if (loading) loading.style.display = 'none';
-                    
-                    if (data === 'OK') {
-                        if (sentMsg) sentMsg.style.display = 'block';
-                        form.reset();
-                        
-                        setTimeout(() => {
-                            if (sentMsg) sentMsg.style.display = 'none';
-                        }, 5000);
-                    } else {
-                        if (errorMsg) {
-                            errorMsg.style.display = 'block';
-                            errorMsg.textContent = data || 'Submission failed';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    if (loading) loading.style.display = 'none';
-                    if (errorMsg) {
-                        errorMsg.style.display = 'block';
-                        errorMsg.textContent = 'Network error. Please try again.';
-                    }
-                });
-            }
-        }, 1000);
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const loading = form.querySelector('.loading');
+    const errorMsg = form.querySelector('.error-message');
+    const sentMsg = form.querySelector('.sent-message');
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    sentMsg.style.display = 'none';
+
+    fetch('http://127.0.0.1:8000/api/book/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        loading.style.display = 'none';
+
+        if (result.message) {
+            sentMsg.style.display = 'block';
+            form.reset();
+        } else {
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = result.error || 'Booking failed';
+        }
+    })
+    .catch(error => {
+        loading.style.display = 'none';
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = 'Network error. Please try again.';
     });
-})();
+});
 </script>
       </div>
 

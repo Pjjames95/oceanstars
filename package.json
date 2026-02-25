@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Pjjames95/ocean-stars-hotel#readme",
   "dependencies": {
-    "nodemailer": "^8.0.1"
+    "nodemailer": "^8.0.1",
+    "pg": "^8.18.0"
   }
 }

@@ -1,79 +1,94 @@
-// api/booktable.js
-const nodemailer = require('nodemailer');
+    const formData = new FormData(e.target);
 
-module.exports = async (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    const response = await fetch("http://127.0.0.1:8000/api/book/", {
+        method: "POST",
+        body: formData
+    });
 
-    // Handle preflight OPTIONS request
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+    const data = await response.json();
+
+    if (response.ok) {
+        alert("Booking confirmed!");
+    } else {
+        alert(data.error);
     }
 
-    // Only allow POST
-    if (req.method !== 'POST') {
-        return res.status(405).send('Method not allowed');
-    }
+// // api/booktable.js
+// const nodemailer = require('nodemailer');
 
-    try {
-        console.log('Received booking request:', req.body);
+// module.exports = async (req, res) => {
+//     // Set CORS headers
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        const { name, email, phone, date, time, people, message } = req.body;
+//     // Handle preflight OPTIONS request
+//     if (req.method === 'OPTIONS') {
+//         res.status(200).end();
+//         return;
+//     }
 
-        // Validate required fields
-        if (!name || !email || !phone || !date || !time || !people) {
-            return res.status(400).send('Please fill in all required fields');
-        }
+//     // Only allow POST
+//     if (req.method !== 'POST') {
+//         return res.status(405).send('Method not allowed');
+//     }
 
-        // Validate email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).send('Invalid email address');
-        }
+//     try {
+//         console.log('Received booking request:', req.body);
 
-        // Create email content
-        const emailContent = `
-You have received a new table booking request:
+//         const { name, email, phone, date, time, people, message } = req.body;
 
-Name: ${name}
-Email: ${email}
-Phone: ${phone}
-Date: ${date}
-Time: ${time}
-Number of People: ${people}
+//         // Validate required fields
+//         if (!name || !email || !phone || !date || !time || !people) {
+//             return res.status(400).send('Please fill in all required fields');
+//         }
 
-Message:
-${message || 'No message provided'}
-        `;
+//         // Validate email
+//         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//         if (!emailRegex.test(email)) {
+//             return res.status(400).send('Invalid email address');
+//         }
 
-        console.log('Sending email...');
+//         // Create email content
+//         const emailContent = `
+// You have received a new table booking request:
 
-        // Configure nodemailer with Gmail
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
+// Name: ${name}
+// Email: ${email}
+// Phone: ${phone}
+// Date: ${date}
+// Time: ${time}
+// Number of People: ${people}
 
-        // Send email
-        await transporter.sendMail({
-            from: `"Ocean Stars Hotel" <${process.env.EMAIL_USER}>`,
-            to: 'gachombajames7@gmail.com',
-            replyTo: email,
-            subject: `New Table Booking Request - ${name}`,
-            text: emailContent
-        });
+// Message:
+// ${message || 'No message provided'}
+//         `;
 
-        console.log('Email sent successfully');
-        res.status(200).send('OK');
+//         console.log('Sending email...');
 
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Message could not be sent. Please try again later.');
-    }
-};
+//         // Configure nodemailer with Gmail
+//         const transporter = nodemailer.createTransport({
+//             service: 'gmail',
+//             auth: {
+//                 user: process.env.EMAIL_USER,
+//                 pass: process.env.EMAIL_PASS
+//             }
+//         });
+
+//         // Send email
+//         await transporter.sendMail({
+//             from: `"Ocean Stars Hotel" <${process.env.EMAIL_USER}>`,
+//             to: 'gachombajames7@gmail.com',
+//             replyTo: email,
+//             subject: `New Table Booking Request - ${name}`,
+//             text: emailContent
+//         });
+
+//         console.log('Email sent successfully');
+//         res.status(200).send('OK');
+
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('Message could not be sent. Please try again later.');
+//     }
+// };
