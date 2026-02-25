@@ -627,7 +627,7 @@
             <div class="loading">Loading</div>
             <div class="error-message"></div>
             <div class="sent-message">Your booking request was sent. We will call back or send an Email to confirm your reservation. Thank you!</div>
-            <button type="submit">Book a Table</button>
+            <button type="submit" id="bookBtn">Book a Table</button>
           </div>
         </form>
         
@@ -678,6 +678,10 @@ document.addEventListener('DOMContentLoaded', function() {
             errorMsg.textContent = 'Network error. Please try again.';
         });
     });
+    document.getElementById('bookBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('bookingForm').dispatchEvent(new Event('submit'));
+});
 });
 </script>
       </div>
