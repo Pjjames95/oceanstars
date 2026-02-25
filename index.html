@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMsg.style.display = 'none';
         sentMsg.style.display = 'none';
 
-        fetch('http://127.0.0.1:8000/api/book/', {
+        fetch('https://stars-reservations.onrender.com/api/book/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

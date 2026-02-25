@@ -1,6 +1,6 @@
     const formData = new FormData(e.target);
 
-    const response = await fetch("http://127.0.0.1:8000/api/book/", {
+    const response = await fetch("https://stars-reservations.onrender.com/api/book/", {
         method: "POST",
         body: formData
     });
