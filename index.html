@@ -667,6 +667,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.message) {
                 sentMsg.style.display = 'block';
                 form.reset();
+                setTimeout(() => {
+                  if (sentMsg) sentMsg.style.display = 'none';
+                    }, 5000);
             } else {
                 errorMsg.style.display = 'block';
                 errorMsg.textContent = result.error || 'Booking failed';
