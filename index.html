@@ -1114,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Unified Form Handler for Vercel -->
 <!-- COMPLETE FORM HANDLER - Replace all other form scripts -->
 
-<!-- <script>
+<script>
 (function() {
     'use strict';
     
@@ -1131,21 +1131,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function initForms() {
-        console.log('Initializing forms...');
+        console.log('Initializing contactForm...');
         
         // Remove any inline submit handlers
-        document.querySelectorAll('form').forEach(form => {
-            form.onsubmit = null;
-        });
-        
-        // Handle Booking Form
-        const bookingForm = document.getElementById('bookingForm') || 
-                           document.querySelector('form[action*="booktable"]');
-        
-        if (bookingForm) {
-            console.log('Found booking form');
-            setupForm(bookingForm, '/api/booktable');
-        }
+        // document.querySelectorAll('contactForm').forEach(form => {
+        //     form.onsubmit = null;
+        // });
         
         // Handle Contact Form
         const contactForm = document.querySelector('form[action*="contact"]');
@@ -1239,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Form handler attached for:', endpoint);
     }
 })();
-</script> -->
+</script>
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
